@@ -5,7 +5,6 @@ plugins {
 }
 
 group = 'com.github.cuzfrog'
-version = '0.1.0'
 sourceCompatibility = '17'
 
 configurations {

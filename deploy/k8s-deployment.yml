@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-task
+  labels:
+    app: test-task
+  annotations:
+    kubernetes.io/change-cause: deployment $IMAGE
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: test-task
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: test-task
+    spec:
+      containers:
+      - env:
+        - name: MARIADB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mariadb
+              key: mariadb-username
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb
+              key: mariadb-password
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+
+        name: test-task
+        image: $IMAGE
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+

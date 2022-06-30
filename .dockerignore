@@ -1,0 +1,12 @@
+.github/
+deploy/
+gradle/
+src/
+.gitattributes
+.gitignore
+build.gradle
+gradle.properties
+gradlew
+gradlew.bat
+ramfs-target.bat
+settings.gradle

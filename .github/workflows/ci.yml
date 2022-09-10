@@ -96,6 +96,8 @@ jobs:
           envsubst < deploy/k8s-deployment.yml | kubectl --namespace $NAMESPACE apply -f -
           kubectl --namespace $NAMESPACE wait deployment test-task --for condition=Available=True --timeout=60s
           kubectl --namespace $NAMESPACE apply -f deploy/k8s-service.yml
+          kubectl --namespace $NAMESPACE apply -f deploy/redis.deploy.yml
+          kubectl --namespace $NAMESPACE apply -f deploy/redis.service.yml
 
     - name: Verify Deployment
       uses: cuzfrog/install-kubectl@v1

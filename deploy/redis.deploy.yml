@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: app-cuzfrog
+  name: testapp-redis
+  labels:
+    app: testapp-redis
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: testapp-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: testapp-redis
+    spec:
+      containers:
+        - name: database
+          image: redis:bullseye
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+          ports:
+            - containerPort: 6379

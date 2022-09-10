@@ -5,6 +5,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  NAMESPACE: app-cuzfrog
+
 jobs:
 
   build:
@@ -90,9 +93,9 @@ jobs:
         version: v1.21.6
         run: |
           export IMAGE=${{ env.IMAGE }}
-          envsubst < deploy/k8s-deployment.yml | kubectl apply -f -
-          kubectl wait deployment test-task --for condition=Available=True --timeout=60s
-          kubectl apply -f deploy/k8s-service.yml
+          envsubst < deploy/k8s-deployment.yml | kubectl --namespace $NAMESPACE apply -f -
+          kubectl --namespace $NAMESPACE wait deployment test-task --for condition=Available=True --timeout=60s
+          kubectl --namespace $NAMESPACE apply -f deploy/k8s-service.yml
 
     - name: Verify Deployment
       uses: cuzfrog/install-kubectl@v1
@@ -101,12 +104,12 @@ jobs:
         version: v1.21.6
         run: |
           echo "Checking deployment..."
-          status=$(kubectl get deployment/test-task -o jsonpath='{.status.conditions[?(@.type=="Available")].status}')
+          status=$(kubectl --namespace $NAMESPACE get deployment/test-task -o jsonpath='{.status.conditions[?(@.type=="Available")].status}')
           if [ "$status" != "True" ]; then
             echo "Deployment not availble!"
             exit 1
           fi
-          version=$(kubectl get deployment/test-task -o jsonpath='{.spec.template.spec.containers[0].image}')
+          version=$(kubectl --namespace $NAMESPACE get deployment/test-task -o jsonpath='{.spec.template.spec.containers[0].image}')
           if [ "$version" != "${{ env.IMAGE }}" ]; then
             echo "Deployment[$version] not updated to ${{ env.IMAGE }}!"
             exit 1

@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: app-cuzfrog
   name: test-task
   labels:
     app: test-task
@@ -21,16 +22,20 @@ spec:
     spec:
       containers:
       - env:
+        - name: MARIADB_SERVICE_HOST
+          value: maria.db-cuzfrog.svc.cluster.local
+        - name: MARIADB_SERVICE_PORT
+          value: "3306"
         - name: MARIADB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mariadb
-              key: mariadb-username
+              name: app-secret
+              key: testapp-mariadb-username
         - name: MARIADB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mariadb
-              key: mariadb-password
+              name: app-secret
+              key: testapp-mariadb-password
         - name: SPRING_PROFILES_ACTIVE
           value: prod
 
